@@ -63,27 +63,10 @@ components:
           type: object
         obstacles:
           type: object
-    ShortestPathResponse:
+    ShortestPathResponseBody:
       type: object
       properties:
-        start:
-          type: integer
-          format: int64
-          example: 10
-        destination:
-          type: integer
-          format: int64
-          example: 198772
-        algorithm:
-          type: string
-          example: dijkstra
-          enum:
-            - dijkstra
-            - belmman-ford
-            - something-else
-        map:
-          type: object
-        obstacles:
+        distance:
           type: object
     ApiResponse:
       type: object
@@ -94,6 +77,4 @@ components:
         type:
           type: string
         message:
-          type: string
-
-
+          $ref: '#/components/schemas/ShortestPathResponseBody'
