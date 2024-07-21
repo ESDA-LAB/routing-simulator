@@ -1,0 +1,80 @@
+openapi: 3.0.3
+info:
+  title: Shortest Path API
+  description: |-
+    This is the API for starting routing calculation processes
+  contact:
+    email: ch.panagiotou@esdalab.ece.uop.gr
+  version: 0.0.1
+externalDocs:
+  description: ESDALAB
+  url: http://esdalab.ece.uop.gr
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: route
+    description: Everything about routes
+paths:
+  /route/shortestPath:
+    post:
+      tags:
+        - route
+      summary: get a shortest path for a route
+      description: Give the start and destination, the map, and the algorithm
+      operationId: createShortestPath
+      requestBody:
+        description: Update an existent pet in the store
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShortestPathRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+        '400':
+          description: Invalid data supplied
+
+components:
+  schemas:
+    ShortestPathRequest:
+      type: object
+      properties:
+        start:
+          type: integer
+          format: int64
+          example: 10
+        destination:
+          type: integer
+          format: int64
+          example: 198772
+        algorithm:
+          type: string
+          example: dijkstra
+          enum:
+            - dijkstra
+            - belmman-ford
+            - something-else
+        map:
+          type: object
+        obstacles:
+          type: object
+    ShortestPathResponseBody:
+      type: object
+      properties:
+        distance:
+          type: object
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        type:
+          type: string
+        message:
+          $ref: '#/components/schemas/ShortestPathResponseBody'
