@@ -1,1 +1,44 @@
+from fastapi import FastAPI, HTTPException
+from typing import List, Tuple
+from dijkstra_shortest_path import DijkstraShortestPath
+from bellman_ford_shortest_path import BellmanFordShortestPath
 
+app = FastAPI()
+
+@app.post("/shortest-path/dijkstra")
+def find_shortest_path_dijkstra(start: Tuple[int, int], end: Tuple[int, int], obstacles: List[Tuple[int, int]], 
+                                map_size: Tuple[int, int]):
+    # Δημιουργία πίνακα 16x16 με κόστος 1 για κάθε κελί
+    graph_16x16 = [[1]*16 for _ in range(16)]
+    
+    # Ορισμός εμποδίων με άπειρο κόστος
+    for x, y in obstacles:
+        if 0 <= x < 16 and 0 <= y < 16:
+            graph_16x16[x][y] = float('inf')
+
+    dijkstra = DijkstraShortestPath(graph_16x16)
+    shortest_distance = dijkstra.FindRoute(start, end, obstacles, map_size)
+
+    if shortest_distance == -1:
+        raise HTTPException(status_code=404, detail="No path found")
+    
+    return {"algorithm": "Dijkstra", "start": start, "end": end, "shortest_distance": shortest_distance}
+
+@app.post("/shortest-path/bellman-ford")
+def find_shortest_path_bellman_ford(start: Tuple[int, int], end: Tuple[int, int], obstacles: List[Tuple[int, int]], 
+                                    map_size: Tuple[int, int]):
+    # Δημιουργία πίνακα 16x16 με κόστος 1 για κάθε κελί
+    graph_16x16 = [[1]*16 for _ in range(16)]
+    
+    # Ορισμός εμποδίων με άπειρο κόστος
+    for x, y in obstacles:
+        if 0 <= x < 16 and 0 <= y < 16:
+            graph_16x16[x][y] = float('inf')
+
+    bellman_ford = BellmanFordShortestPath(graph_16x16)
+    shortest_distance = bellman_ford.FindRoute(start, end, obstacles, map_size)
+
+    if shortest_distance == -1:
+        raise HTTPException(status_code=404, detail="No path found")
+    
+    return {"algorithm": "Bellman-Ford", "start": start, "end": end, "shortest_distance": shortest_distance}
