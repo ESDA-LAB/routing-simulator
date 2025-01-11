@@ -1,1 +1,9 @@
+http://127.0.0.1:8000/shortest-path/bellman-ford
+
+{
+  "algorithm": "Bellman-Ford",
+  "start": [0, 0],
+  "end": [15, 15],
+  "shortest_distance": 30
+}
 
