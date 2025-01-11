@@ -1,1 +1,9 @@
+curl -X POST "http://127.0.0.1:8000/shortest-path/bellman-ford" \
+-H "Content-Type: application/json" \
+-d '{
+  "start": [0, 0],
+  "end": [15, 15],
+  "obstacles": [[5, 5], [5, 6], [6, 5], [6, 6]],
+  "map_size": [16, 16]
+}'
 
