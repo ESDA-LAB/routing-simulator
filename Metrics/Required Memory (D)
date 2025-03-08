@@ -1,0 +1,15 @@
+import tracemalloc
+import heapq
+
+def dijkstra_memory(graph, start, goal):
+    tracemalloc.start()  # Έναρξη μέτρησης μνήμης
+
+    # Εφαρμογή του αλγορίθμου Dijkstra
+    path, explored_nodes = dijkstra(graph, start, goal)
+
+    # Λήψη της μέγιστης μνήμης που χρησιμοποιήθηκε
+    current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+
+    print(f"Μέγιστη Μνήμη Χρήσης: {peak / 1024:.2f} KB")
+    return peak / 1024  # Μετατροπή από bytes σε KB
