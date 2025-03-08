@@ -1,0 +1,12 @@
+import time
+
+def dijkstra_performance(graph, start, goal):
+    start_time = time.time()  # Έναρξη χρονισμού
+    path, explored_nodes = dijkstra(graph, start, goal)  # Εκτέλεση Dijkstra
+    execution_time = time.time() - start_time  # Υπολογισμός χρόνου εκτέλεσης
+
+    # Υπολογισμός ταχύτητας (κόμβοι που πέρασε / χρόνος)
+    search_speed = len(explored_nodes) / execution_time if execution_time > 0 else float('inf')
+
+    print(f"Ταχύτητα Ευρέσεως: {search_speed:.2f} κόμβοι/sec")
+    return search_speed
