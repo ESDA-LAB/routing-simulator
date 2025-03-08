@@ -1,0 +1,2 @@
+
+path_length = dist[goal]  # Ελάχιστη απόσταση από start -> goal
