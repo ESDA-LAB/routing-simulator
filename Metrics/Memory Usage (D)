@@ -1,0 +1,7 @@
+import tracemalloc
+
+tracemalloc.start()
+dijkstra(...)  
+current, peak = tracemalloc.get_traced_memory()
+print(f"Χρήση μνήμης: {peak / 10**6} MB")
+tracemalloc.stop()
