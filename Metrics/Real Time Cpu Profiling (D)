@@ -1,0 +1,45 @@
+import heapq
+import cProfile
+import pstats
+import io
+
+def dijkstra(graph, start, goal):
+    shortest_distance = {node: float('inf') for node in graph}
+    shortest_distance[start] = 0
+    pq = [(0, start)]
+    
+    while pq:
+        current_distance, current_node = heapq.heappop(pq)
+        if current_node == goal:
+            break
+        for neighbor, weight in graph[current_node]:
+            distance = current_distance + weight
+            if distance < shortest_distance[neighbor]:
+                shortest_distance[neighbor] = distance
+                heapq.heappush(pq, (distance, neighbor))
+    
+    return shortest_distance[goal]
+
+def profile_dijkstra(graph, start, goal):
+    profiler = cProfile.Profile()
+    profiler.enable()  # Έναρξη καταγραφής CPU
+    result = dijkstra(graph, start, goal)
+    profiler.disable()  # Τέλος καταγραφής CPU
+    
+    s = io.StringIO()
+    ps = pstats.Stats(profiler, stream=s).sort_stats("cumulative")
+    ps.print_stats()
+    
+    print(s.getvalue())  # Εκτύπωση ανάλυσης CPU
+    return result
+
+# Παράδειγμα γράφου
+graph_example = {
+    'A': [('B', 1), ('C', 4)],
+    'B': [('A', 1), ('C', 2), ('D', 5)],
+    'C': [('A', 4), ('B', 2), ('D', 1)],
+    'D': [('B', 5), ('C', 1)]
+}
+
+# Εκτέλεση με CPU Profiling
+profile_dijkstra(graph_example, 'A', 'D')
