@@ -1,0 +1,38 @@
+import heapq
+
+def dijkstra_shortest_path(graph, start, goal):
+    # Αρχικοποίηση αποστάσεων (άπειρο για όλους εκτός από τον start)
+    shortest_distance = {node: float('inf') for node in graph}
+    shortest_distance[start] = 0
+    
+    # Ουρά προτεραιότητας
+    pq = [(0, start)]
+    parent = {start: None}
+    
+    while pq:
+        current_distance, current_node = heapq.heappop(pq)
+        
+        # Αν φτάσαμε στο στόχο, σταματάμε
+        if current_node == goal:
+            break
+        
+        for neighbor, weight in graph[current_node]:
+            distance = current_distance + weight
+            if distance < shortest_distance[neighbor]:
+                shortest_distance[neighbor] = distance
+                parent[neighbor] = current_node
+                heapq.heappush(pq, (distance, neighbor))
+    
+    # Ανάκτηση του μονοπατιού
+    path = []
+    node = goal
+    while node is not None:
+        path.append(node)
+        node = parent[node]
+    
+    path.reverse()
+    
+    print(f"Πιο σύντομη διαδρομή: {path}")
+    print(f"Συνολικό μήκος διαδρομής: {shortest_distance[goal]}")
+    
+    return path, shortest_distance[goal]
