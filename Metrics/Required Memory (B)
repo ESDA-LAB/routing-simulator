@@ -1,0 +1,51 @@
+import memory_profiler
+import time
+
+def bellman_ford(graph, vertices, start, goal):
+    # Αρχικοποίηση αποστάσεων
+    distance = {v: float('inf') for v in vertices}
+    distance[start] = 0
+    predecessor = {v: None for v in vertices}
+
+    # Χαλάρωση ακμών |V| - 1 φορές
+    for _ in range(len(vertices) - 1):
+        for u, v, weight in graph:
+            if distance[u] + weight < distance[v]:
+                distance[v] = distance[u] + weight
+                predecessor[v] = u
+
+    # Έλεγχος αρνητικού κύκλου
+    for u, v, weight in graph:
+        if distance[u] + weight < distance[v]:
+            raise ValueError("Το γράφημα περιέχει αρνητικό κύκλο!")
+
+    # Ανακατασκευή του μονοπατιού
+    path = []
+    current = goal
+    while current is not None:
+        path.insert(0, current)
+        current = predecessor[current]
+
+    return path, distance[goal]
+
+# Παράδειγμα γράφου
+edges = [
+    ('A', 'B', 4), ('A', 'C', 2),
+    ('B', 'C', 3), ('B', 'D', 2), ('B', 'E', 3),
+    ('C', 'B', 1), ('C', 'D', 4), ('C', 'E', 5),
+    ('E', 'D', 1)
+]
+vertices = {'A', 'B', 'C', 'D', 'E'}
+
+# Μέτρηση μνήμης και εκτέλεσης
+mem_before = memory_profiler.memory_usage()[0]
+start_time = time.time()
+shortest_path, path_length = bellman_ford(edges, vertices, 'A', 'D')
+end_time = time.time()
+mem_after = memory_profiler.memory_usage()[0]
+
+# Εκτύπωση αποτελεσμάτων
+print(f"Συντομότερο μονοπάτι: {shortest_path}")
+print(f"Μήκος μονοπατιού: {path_length}")
+print(f"Χρόνος εκτέλεσης: {end_time - start_time:.6f} δευτερόλεπτα")
+print(f"Μνήμη που χρησιμοποιήθηκε: {mem_after - mem_before:.6f} MB")
