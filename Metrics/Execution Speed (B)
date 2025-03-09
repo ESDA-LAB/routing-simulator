@@ -36,12 +36,15 @@ edges = [
 ]
 vertices = {'A', 'B', 'C', 'D', 'E'}
 
-# Μέτρηση χρόνου εκτέλεσης
+# Εκτέλεση Bellman-Ford με μέτρηση χρόνου
+start_node, goal_node = 'A', 'D'
 start_time = time.time()
-shortest_path, path_length = bellman_ford(edges, vertices, 'A', 'D')
+shortest_path, path_length = bellman_ford(edges, vertices, start_node, goal_node)
 end_time = time.time()
 
+execution_time = end_time - start_time
+
 # Εκτύπωση αποτελεσμάτων
-print(f"Συντομότερο μονοπάτι: {shortest_path}")
-print(f"Μήκος μονοπατιού: {path_length}")
-print(f"Χρόνος εκτέλεσης: {end_time - start_time:.6f} δευτερόλεπτα")
+print(f"Πιο σύντομη διαδρομή από {start_node} → {goal_node}: {shortest_path}")
+print(f"Μήκος συντομότερου μονοπατιού: {path_length}")
+print(f"Χρόνος εκτέλεσης: {execution_time:.6f} δευτερόλεπτα")
