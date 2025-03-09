@@ -1,0 +1,35 @@
+from memory_profiler import profile
+
+@profile
+def bellman_ford(graph, vertices, start):
+    # Αρχικοποίηση αποστάσεων και προκατόχων
+    distance = {v: float('inf') for v in vertices}
+    predecessor = {v: None for v in vertices}
+    distance[start] = 0
+
+    # Χαλάρωση ακμών |V| - 1 φορές
+    for _ in range(len(vertices) - 1):
+        for u, v, weight in graph:
+            if distance[u] + weight < distance[v]:
+                distance[v] = distance[u] + weight
+                predecessor[v] = u
+
+    # Έλεγχος αρνητικών κύκλων
+    for u, v, weight in graph:
+        if distance[u] + weight < distance[v]:
+            raise ValueError("Το γράφημα περιέχει αρνητικό κύκλο!")
+
+    return distance, predecessor
+
+# Παράδειγμα γράφου
+edges = [
+    ('A', 'B', 4), ('A', 'C', 2),
+    ('B', 'C', 3), ('B', 'D', 2), ('B', 'E', 3),
+    ('C', 'B', 1), ('C', 'D', 4), ('C', 'E', 5),
+    ('E', 'D', 1)
+]
+vertices = {'A', 'B', 'C', 'D', 'E'}
+
+# Εκτέλεση με ανάλυση μνήμης
+start_node = 'A'
+bellman_ford(edges, vertices, start_node)
