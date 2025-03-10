@@ -1,0 +1,42 @@
+import numpy as np
+import memory_profiler
+
+def floyd_warshall_memory(graph):
+    """Υπολογίζει τη χρήση μνήμης του Floyd-Warshall"""
+    num_vertices = len(graph)
+    dist = np.array(graph, dtype=float)
+
+    # Αντικατάσταση του 0 με άπειρο (εκτός της διαγωνίου)
+    for i in range(num_vertices):
+        for j in range(num_vertices):
+            if i != j and dist[i][j] == 0:
+                dist[i][j] = float('inf')
+
+    # Εκκίνηση μέτρησης μνήμης
+    mem_usage_before = memory_profiler.memory_usage()[0]
+
+    # Εκτέλεση Floyd-Warshall
+    for k in range(num_vertices):
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    # Μέτρηση μνήμης μετά
+    mem_usage_after = memory_profiler.memory_usage()[0]
+
+    memory_used = mem_usage_after - mem_usage_before
+    return dist, memory_used
+
+# Παράδειγμα γράφου 5 κόμβων
+graph = [
+    [0, 3, 0, 0, 7],
+    [3, 0, 1, 0, 5],
+    [0, 1, 0, 2, 0],
+    [0, 0, 2, 0, 3],
+    [7, 5, 0, 3, 0]
+]
+
+# Εκτέλεση και μέτρηση μνήμης
+shortest_paths, memory_used = floyd_warshall_memory(graph)
+
+print(f"📊 Μνήμη που απαιτήθηκε: {memory_used:.4f} MB")
