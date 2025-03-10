@@ -1,0 +1,38 @@
+import numpy as np
+
+def floyd_warshall(graph):
+    """Υπολογίζει τις μικρότερες αποστάσεις μεταξύ όλων των κόμβων"""
+    num_vertices = len(graph)
+    dist = np.array(graph, dtype=float)
+
+    # Αντικατάσταση του 0 με άπειρο (εκτός της διαγωνίου)
+    for i in range(num_vertices):
+        for j in range(num_vertices):
+            if i != j and dist[i][j] == 0:
+                dist[i][j] = float('inf')
+
+    # Εφαρμογή του Floyd-Warshall
+    for k in range(num_vertices):
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    return dist
+
+# Παράδειγμα γράφου με 5 κόμβους (βάρη ακμών)
+graph = [
+    [0, 3, 0, 0, 7],
+    [3, 0, 1, 0, 5],
+    [0, 1, 0, 2, 0],
+    [0, 0, 2, 0, 3],
+    [7, 5, 0, 3, 0]
+]
+
+# Εκτέλεση Floyd-Warshall
+shortest_paths = floyd_warshall(graph)
+
+# Επιλογή συγκεκριμένης διαδρομής (π.χ. από κόμβο 0 σε κόμβο 4)
+start, goal = 0, 4
+path_length = shortest_paths[start][goal]
+
+print(f"🔹 Μήκος συντομότερου μονοπατιού από {start} ➝ {goal}: {path_length}")
