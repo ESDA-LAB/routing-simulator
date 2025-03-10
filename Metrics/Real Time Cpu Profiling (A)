@@ -1,0 +1,57 @@
+import heapq
+import cProfile
+import pstats
+import io
+
+def heuristic(a, b):
+    """Υπολογισμός Manhattan απόστασης"""
+    return abs(a[0] - b[0]) + abs(a[1] - b[1])
+
+def a_star_search(grid, start, goal):
+    """A* Algorithm - Υπολογισμός του shortest path"""
+    rows, cols = len(grid), len(grid[0])
+    open_set = []
+    heapq.heappush(open_set, (0, start))
+    g_score = {start: 0}
+    came_from = {}
+
+    while open_set:
+        _, current = heapq.heappop(open_set)
+
+        if current == goal:
+            return True  # Βρέθηκε διαδρομή
+
+        for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
+            neighbor = (current[0] + dx, current[1] + dy)
+            
+            if 0 <= neighbor[0] < rows and 0 <= neighbor[1] < cols and grid[neighbor[0]][neighbor[1]] != 1:
+                tentative_g_score = g_score[current] + 1
+                
+                if neighbor not in g_score or tentative_g_score < g_score[neighbor]:
+                    g_score[neighbor] = tentative_g_score
+                    priority = tentative_g_score + heuristic(neighbor, goal)
+                    heapq.heappush(open_set, (priority, neighbor))
+                    came_from[neighbor] = current
+
+    return False  # Δεν βρέθηκε μονοπάτι
+
+# Παράδειγμα 50x50 grid με εμπόδια
+grid = [[0] * 50 for _ in range(50)]
+grid[25][25] = 1  # Προσθήκη εμποδίου
+
+start = (0, 0)
+goal = (49, 49)
+
+# **Real-time CPU Profiling**
+profiler = cProfile.Profile()
+profiler.enable()  # Έναρξη profiling
+
+a_star_search(grid, start, goal)  # Εκτέλεση του A*
+
+profiler.disable()  # Τερματισμός profiling
+
+# **Εμφάνιση στατιστικών χρήσης CPU**
+s = io.StringIO()
+stats = pstats.Stats(profiler, stream=s).sort_stats(pstats.SortKey.TIME)
+stats.print_stats(10)  # Εμφάνιση των 10 πιο αργών συναρτήσεων
+print(s.getvalue())
