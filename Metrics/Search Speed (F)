@@ -1,0 +1,42 @@
+import numpy as np
+import time
+
+def floyd_warshall(graph):
+    """Υπολογίζει τις μικρότερες αποστάσεις μεταξύ όλων των κόμβων"""
+    num_vertices = len(graph)
+    dist = np.array(graph, dtype=float)
+
+    # Αντικατάσταση του 0 με άπειρο (εκτός της διαγωνίου)
+    for i in range(num_vertices):
+        for j in range(num_vertices):
+            if i != j and dist[i][j] == 0:
+                dist[i][j] = float('inf')
+
+    # Ξεκινάμε το χρονόμετρο
+    start_time = time.time()
+
+    # Εφαρμογή του Floyd-Warshall
+    for k in range(num_vertices):
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    # Σταματάμε το χρονόμετρο
+    end_time = time.time()
+
+    execution_time = end_time - start_time
+    return dist, execution_time
+
+# Παράδειγμα γράφου με 5 κόμβους (βάρη ακμών)
+graph = [
+    [0, 3, 0, 0, 7],
+    [3, 0, 1, 0, 5],
+    [0, 1, 0, 2, 0],
+    [0, 0, 2, 0, 3],
+    [7, 5, 0, 3, 0]
+]
+
+# Εκτέλεση Floyd-Warshall
+shortest_paths, execution_time = floyd_warshall(graph)
+
+print(f"⏱️ Χρόνος εύρεσης διαδρομών: {execution_time:.6f} δευτερόλεπτα")
