@@ -1,0 +1,63 @@
+import numpy as np
+
+def floyd_warshall_path(graph):
+    """ Υλοποίηση του Floyd-Warshall που επιστρέφει την πιο σύντομη διαδρομή """
+    num_vertices = len(graph)
+    
+    # Αρχικοποίηση πίνακα αποστάσεων
+    dist = np.array(graph, dtype=float)
+    
+    # Αντικατάσταση του 0 με άπειρο (εκτός της διαγωνίου)
+    for i in range(num_vertices):
+        for j in range(num_vertices):
+            if i != j and dist[i][j] == 0:
+                dist[i][j] = float('inf')
+    
+    # Πίνακας επόμενων κόμβων για ανίχνευση διαδρομής
+    next_node = np.full((num_vertices, num_vertices), -1)
+    
+    for i in range(num_vertices):
+        for j in range(num_vertices):
+            if graph[i][j] != 0 and graph[i][j] != float('inf'):
+                next_node[i][j] = j
+    
+    # Εκτέλεση Floyd-Warshall
+    for k in range(num_vertices):
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                if dist[i][j] > dist[i][k] + dist[k][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+                    next_node[i][j] = next_node[i][k]
+    
+    return dist, next_node
+
+def reconstruct_path(start, end, next_node):
+    """ Ανακατασκευή της πιο σύντομης διαδρομής από τον πίνακα next_node """
+    if next_node[start][end] == -1:
+        return None  # Δεν υπάρχει διαδρομή
+    
+    path = [start]
+    while start != end:
+        start = next_node[start][end]
+        path.append(start)
+    
+    return path
+
+# Παράδειγμα γράφου (μηδενικά -> απουσία σύνδεσης)
+graph = [
+    [0, 3, 0, 0, 7],
+    [3, 0, 1, 0, 5],
+    [0, 1, 0, 2, 0],
+    [0, 0, 2, 0, 3],
+    [7, 5, 0, 3, 0]
+]
+
+# Υπολογισμός πιο σύντομης διαδρομής
+distances, next_nodes = floyd_warshall_path(graph)
+
+# Ορισμός σημείου εκκίνησης και προορισμού
+start, end = 0, 4
+shortest_path = reconstruct_path(start, end, next_nodes)
+
+print(f"📏 Μήκος πιο σύντομης διαδρομής από {start} ➝ {end}: {distances[start][end]}")
+print(f"🛤️ Διαδρομή: {shortest_path}")
