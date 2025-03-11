@@ -1,0 +1,34 @@
+import numpy as np
+from memory_profiler import profile
+
+@profile
+def floyd_warshall(graph):
+    """Υλοποίηση του Floyd-Warshall με μέτρηση μνήμης"""
+    num_vertices = len(graph)
+    dist = np.array(graph, dtype=float)  # Πίνακας αποστάσεων O(V²)
+
+    # Αρχικοποίηση: αντικατάσταση του 0 με άπειρο (εκτός της διαγωνίου)
+    for i in range(num_vertices):
+        for j in range(num_vertices):
+            if i != j and dist[i][j] == 0:
+                dist[i][j] = float('inf')
+
+    # Εκτέλεση Floyd-Warshall O(V³)
+    for k in range(num_vertices):
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    return dist
+
+# Παράδειγμα γράφου
+graph = [
+    [0, 3, 0, 0, 7],
+    [3, 0, 1, 0, 5],
+    [0, 1, 0, 2, 0],
+    [0, 0, 2, 0, 3],
+    [7, 5, 0, 3, 0]
+]
+
+# Εκτέλεση και μέτρηση μνήμης
+floyd_warshall(graph)
