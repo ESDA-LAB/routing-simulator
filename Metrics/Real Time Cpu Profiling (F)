@@ -1,0 +1,49 @@
+import numpy as np
+import cProfile
+import pstats
+import io
+
+def floyd_warshall(graph):
+    """Υλοποίηση του Floyd-Warshall με καταγραφή CPU Profiling"""
+    num_vertices = len(graph)
+    dist = np.array(graph, dtype=float)
+
+    # Αρχικοποίηση: αντικατάσταση του 0 με άπειρο (εκτός της διαγωνίου)
+    for i in range(num_vertices):
+        for j in range(num_vertices):
+            if i != j and dist[i][j] == 0:
+                dist[i][j] = float('inf')
+
+    # Εκτέλεση Floyd-Warshall
+    for k in range(num_vertices):
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                dist[i][j] = min(dist[i][j], dist[i][k] + dist[k][j])
+
+    return dist
+
+# Παράδειγμα γράφου (μηδενικά -> απουσία σύνδεσης)
+graph = [
+    [0, 3, 0, 0, 7],
+    [3, 0, 1, 0, 5],
+    [0, 1, 0, 2, 0],
+    [0, 0, 2, 0, 3],
+    [7, 5, 0, 3, 0]
+]
+
+# Δημιουργία profiler
+pr = cProfile.Profile()
+pr.enable()  # Έναρξη καταγραφής CPU χρήσης
+
+# Εκτέλεση αλγορίθμου
+floyd_warshall(graph)
+
+# Διακοπή καταγραφής
+pr.disable()
+
+# Προβολή αποτελεσμάτων profiling
+s = io.StringIO()
+ps = pstats.Stats(pr, stream=s).sort_stats(pstats.SortKey.TIME)
+ps.print_stats()
+
+print(s.getvalue())
